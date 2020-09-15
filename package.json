@@ -1,0 +1,36 @@
+{
+  "name": "@bnex/protocol",
+  "version": "1.1.0",
+  "main": "index.js",
+  "license": "WTFPL",
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.1.0",
+    "@openzeppelin/test-helpers": "^0.5.6",
+    "@truffle/hdwallet-provider": "^1.0.44",
+    "bignumber.js": "^9.0.0",
+    "dotenv-flow": "^3.2.0",
+    "truffle": "^5.1.41",
+    "truffle-flattener": "^1.4.4"
+  },
+  "description": "https://app.bnex.org. Feel free to read the code. More details coming soon.",
+  "files": [
+    "contracts",
+    "build"
+  ],
+  "devDependencies": {
+    "mocha": "^8.0.1"
+  },
+  "scripts": {
+    "test": "mocha",
+    "update": "git add . && git commit -m 'Update' && git push origin master"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bnex-finance/bnex-protocol.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/bnex-finance/bnex-protocol/issues"
+  },
+  "homepage": "https://github.com/bnex-finance/bnex-protocol#readme"
+}
