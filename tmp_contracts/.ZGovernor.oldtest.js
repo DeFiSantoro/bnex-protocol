@@ -1,7 +1,7 @@
 const { expectRevert, time } = require("@openzeppelin/test-helpers");
 const ethers = require("ethers");
-const BnEXToken = artifacts.require("BnEXToken");
-const MasterChef = artifacts.require("MasterChef");
+const BNXToken = artifacts.require("BNXToken");
+const Master = artifacts.require("Master");
 const Timelock = artifacts.require("Timelock");
 const GovernorAlpha = artifacts.require("GovernorAlpha");
 const MockERC20 = artifacts.require("MockERC20");
@@ -13,9 +13,9 @@ function encodeParameters(types, values) {
 
 contract("Governor", ([alice, minter, dev]) => {
   it("should work", async () => {
-    this.sushi = await BnEXToken.new({ from: alice });
+    this.sushi = await BNXToken.new({ from: alice });
     await this.sushi.delegate(dev, { from: dev });
-    this.chef = await MasterChef.new(this.sushi.address, dev, "100", "0", "0", {
+    this.chef = await Master.new(this.sushi.address, dev, "100", "0", "0", {
       from: alice,
     });
     await this.sushi.transferOwnership(this.chef.address, { from: alice });

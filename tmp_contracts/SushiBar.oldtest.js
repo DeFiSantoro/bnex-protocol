@@ -1,10 +1,10 @@
 const { expectRevert } = require("@openzeppelin/test-helpers");
-const BnEXToken = artifacts.require("BnEXToken");
+const BNXToken = artifacts.require("BNXToken");
 const SushiBar = artifacts.require("SushiBar");
 
-contract("BnEXToken", ([alice, bob, carol]) => {
+contract("BNXToken", ([alice, bob, carol]) => {
   beforeEach(async () => {
-    this.sushi = await BnEXToken.new({ from: alice });
+    this.sushi = await BNXToken.new({ from: alice });
     this.bar = await SushiBar.new(this.sushi.address, { from: alice });
     this.sushi.mint(alice, "100", { from: alice });
     this.sushi.mint(bob, "100", { from: alice });

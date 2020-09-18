@@ -4,13 +4,20 @@
   "main": "index.js",
   "license": "WTFPL",
   "dependencies": {
+    "@bnex/sdk": "^1.1.1",
+    "@ethersproject/contracts": "^5.0.4",
+    "@ethersproject/solidity": "^5.0.4",
     "@openzeppelin/contracts": "^3.1.0",
     "@openzeppelin/test-helpers": "^0.5.6",
     "@truffle/hdwallet-provider": "^1.0.44",
     "bignumber.js": "^9.0.0",
     "dotenv-flow": "^3.2.0",
+    "ethereumjs-tx": "^2.1.2",
+    "ethers": "^5.0.14",
+    "fs": "^0.0.1-security",
     "truffle": "^5.1.41",
-    "truffle-flattener": "^1.4.4"
+    "truffle-flattener": "^1.4.4",
+    "web3": "^1.3.0"
   },
   "description": "https://app.bnex.org. Feel free to read the code. More details coming soon.",
   "files": [
@@ -22,7 +29,9 @@
   },
   "scripts": {
     "test": "mocha",
-    "update": "git add . && git commit -m 'Update' && git push origin master"
+    "deploy": "truffle migrate --network testnet --reset",
+    "update": "git add . && git commit -m 'Update' && git push origin master",
+    "ganache": "./ganache"
   },
   "repository": {
     "type": "git",

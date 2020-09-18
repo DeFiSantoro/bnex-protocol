@@ -1,13 +1,13 @@
-const BnEXToken = artifacts.require("BnEXToken");
+const BNXToken = artifacts.require("BNXToken");
 const SushiMaker = artifacts.require("SushiMaker");
 const MockERC20 = artifacts.require("MockERC20");
-const UniswapV2Pair = artifacts.require("UniswapV2Pair");
-const UniswapV2Factory = artifacts.require("UniswapV2Factory");
+const BnEXPair = artifacts.require("BnEXPair");
+const BnEXFactory = artifacts.require("BnEXFactory");
 
 contract("SushiMaker", ([alice, bar, minter]) => {
   beforeEach(async () => {
-    this.factory = await UniswapV2Factory.new(alice, { from: alice });
-    this.sushi = await BnEXToken.new({ from: alice });
+    this.factory = await BnEXFactory.new(alice, { from: alice });
+    this.sushi = await BNXToken.new({ from: alice });
     await this.sushi.mint(minter, "100000000", { from: alice });
     this.weth = await MockERC20.new("WETH", "WETH", "100000000", {
       from: minter,
@@ -24,19 +24,19 @@ contract("SushiMaker", ([alice, bar, minter]) => {
       this.sushi.address,
       this.weth.address
     );
-    this.sushiWETH = await UniswapV2Pair.at(
+    this.sushiWETH = await BnEXPair.at(
       (await this.factory.createPair(this.weth.address, this.sushi.address))
         .logs[0].args.pair
     );
-    this.wethToken1 = await UniswapV2Pair.at(
+    this.wethToken1 = await BnEXPair.at(
       (await this.factory.createPair(this.weth.address, this.token1.address))
         .logs[0].args.pair
     );
-    this.wethToken2 = await UniswapV2Pair.at(
+    this.wethToken2 = await BnEXPair.at(
       (await this.factory.createPair(this.weth.address, this.token2.address))
         .logs[0].args.pair
     );
-    this.token1Token2 = await UniswapV2Pair.at(
+    this.token1Token2 = await BnEXPair.at(
       (await this.factory.createPair(this.token1.address, this.token2.address))
         .logs[0].args.pair
     );

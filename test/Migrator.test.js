@@ -1,31 +1,31 @@
 const { expectRevert, time } = require("@openzeppelin/test-helpers");
-const BnEXToken = artifacts.require("BnEXToken");
-const MasterChef = artifacts.require("MasterChef");
+const BNXToken = artifacts.require("BNXToken");
+const Master = artifacts.require("Master");
 const MockERC20 = artifacts.require("MockERC20");
-const UniswapV2Pair = artifacts.require("UniswapV2Pair");
-const UniswapV2Factory = artifacts.require("UniswapV2Factory");
+const BnEXPair = artifacts.require("BnEXPair");
+const BnEXFactory = artifacts.require("BnEXFactory");
 const Migrator = artifacts.require("Migrator");
 
 contract("Migrator", ([alice, bob, dev, minter]) => {
   beforeEach(async () => {
-    this.factory1 = await UniswapV2Factory.new(alice, { from: alice });
-    this.factory2 = await UniswapV2Factory.new(alice, { from: alice });
-    this.sushi = await BnEXToken.new({ from: alice });
+    this.factory1 = await BnEXFactory.new(alice, { from: alice });
+    this.factory2 = await BnEXFactory.new(alice, { from: alice });
+    this.sushi = await BNXToken.new({ from: alice });
     this.weth = await MockERC20.new("WETH", "WETH", "100000000", {
       from: minter,
     });
     this.token = await MockERC20.new("TOKEN", "TOKEN", "100000000", {
       from: minter,
     });
-    this.lp1 = await UniswapV2Pair.at(
+    this.lp1 = await BnEXPair.at(
       (await this.factory1.createPair(this.weth.address, this.token.address))
         .logs[0].args.pair
     );
-    this.lp2 = await UniswapV2Pair.at(
+    this.lp2 = await BnEXPair.at(
       (await this.factory2.createPair(this.weth.address, this.token.address))
         .logs[0].args.pair
     );
-    this.chef = await MasterChef.new(
+    this.chef = await Master.new(
       this.sushi.address,
       dev,
       "1000",
@@ -58,9 +58,15 @@ contract("Migrator", ([alice, bob, dev, minter]) => {
       (await this.lp1.balanceOf(this.chef.address)).valueOf(),
       "2000000"
     );
-    await expectRevert(this.chef.migrate(0), "migrate: no migrator");
+    await expectRevert(
+      this.chef.migrate(0),
+      "BnEX::Master::migrate::MIGRATOR_NOT_EXIST"
+    );
     await this.chef.setMigrator(this.migrator.address, { from: alice });
-    await expectRevert(this.chef.migrate(0), "migrate: bad");
+    await expectRevert(
+      this.chef.migrate(0),
+      "BnEX::Master::migrate::ERROR_BALANCE"
+    );
     await this.factory2.setMigrator(this.migrator.address, { from: alice });
     await this.chef.migrate(0);
     assert.equal((await this.lp1.balanceOf(this.chef.address)).valueOf(), "0");
@@ -80,13 +86,16 @@ contract("Migrator", ([alice, bob, dev, minter]) => {
     this.tokenx = await MockERC20.new("TOKENX", "TOKENX", "100000000", {
       from: minter,
     });
-    this.lpx = await UniswapV2Pair.at(
+    this.lpx = await BnEXPair.at(
       (await this.factory2.createPair(this.weth.address, this.tokenx.address))
         .logs[0].args.pair
     );
     await this.weth.transfer(this.lpx.address, "10000000", { from: minter });
     await this.tokenx.transfer(this.lpx.address, "500000", { from: minter });
-    await expectRevert(this.lpx.mint(minter), "Must not have migrator");
+    await expectRevert(
+      this.lpx.mint(minter),
+      "BnEX::Pair::mint::MIGRATOR_NOT_EXIST"
+    );
     await this.factory2.setMigrator(
       "0x0000000000000000000000000000000000000000",
       { from: alice }

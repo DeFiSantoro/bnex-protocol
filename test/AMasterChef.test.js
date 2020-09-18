@@ -1,6 +1,6 @@
 const { expectRevert, time } = require("@openzeppelin/test-helpers");
-const BnEXToken = artifacts.require("BnEXToken");
-const MasterChef = artifacts.require("MasterChef");
+const BnEXToken = artifacts.require("BNXToken");
+const MasterChef = artifacts.require("Master");
 const MockERC20 = artifacts.require("MockERC20");
 
 contract("MasterChef", ([alice, bob, carol, dev, minter]) => {
@@ -18,7 +18,7 @@ contract("MasterChef", ([alice, bob, carol, dev, minter]) => {
       { from: alice }
     );
     await this.sushi.transferOwnership(this.chef.address, { from: alice });
-    const sushi = await this.chef.sushi();
+    const sushi = await this.chef.bnx();
     const devaddr = await this.chef.devaddr();
     const owner = await this.sushi.owner();
     assert.equal(sushi.valueOf(), this.sushi.address);
@@ -36,7 +36,10 @@ contract("MasterChef", ([alice, bob, carol, dev, minter]) => {
       { from: alice }
     );
     assert.equal((await this.chef.devaddr()).valueOf(), dev);
-    await expectRevert(this.chef.dev(bob, { from: bob }), "dev: wut?");
+    await expectRevert(
+      this.chef.dev(bob, { from: bob }),
+      "BnEX::Master::dev::FORBIDDEN"
+    );
     await this.chef.dev(bob, { from: dev });
     assert.equal((await this.chef.devaddr()).valueOf(), bob);
     await this.chef.dev(alice, { from: bob });
@@ -237,16 +240,16 @@ contract("MasterChef", ([alice, bob, carol, dev, minter]) => {
       await time.advanceBlockTo("419");
       await this.chef.add("20", this.lp2.address, true);
       // Alice should have 10*1000 pending reward
-      assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), "10000");
+      assert.equal((await this.chef.pendingBNX(0, alice)).valueOf(), "10000");
       // Bob deposits 10 LP2s at block 425
       await time.advanceBlockTo("424");
       await this.chef.deposit(1, "5", { from: bob });
       // Alice should have 10000 + 5*1/3*1000 = 11666 pending reward
-      assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), "11666");
+      assert.equal((await this.chef.pendingBNX(0, alice)).valueOf(), "11666");
       await time.advanceBlockTo("430");
       // At block 430. Bob should get 5*2/3*1000 = 3333. Alice should get ~1666 more.
-      assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), "13333");
-      assert.equal((await this.chef.pendingSushi(1, bob)).valueOf(), "3333");
+      assert.equal((await this.chef.pendingBNX(0, alice)).valueOf(), "13333");
+      assert.equal((await this.chef.pendingBNX(1, bob)).valueOf(), "3333");
     });
 
     it("should stop giving bonus SUSHIs after the bonus period ends", async () => {
@@ -267,10 +270,10 @@ contract("MasterChef", ([alice, bob, carol, dev, minter]) => {
       await this.chef.deposit(0, "10", { from: alice });
       // At block 605, she should have 1000*10 + 100*5 = 10500 pending.
       await time.advanceBlockTo("605");
-      assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), "10500");
+      assert.equal((await this.chef.pendingBNX(0, alice)).valueOf(), "10500");
       // At block 606, Alice withdraws all pending rewards and should get 10600.
       await this.chef.deposit(0, "0", { from: alice });
-      assert.equal((await this.chef.pendingSushi(0, alice)).valueOf(), "0");
+      assert.equal((await this.chef.pendingBNX(0, alice)).valueOf(), "0");
       assert.equal((await this.sushi.balanceOf(alice)).valueOf(), "10600");
     });
   });

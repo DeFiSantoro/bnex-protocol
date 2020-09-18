@@ -1,7 +1,7 @@
 const { expectRevert, time } = require("@openzeppelin/test-helpers");
 const ethers = require("ethers");
-const BnEXToken = artifacts.require("BnEXToken");
-const MasterChef = artifacts.require("MasterChef");
+const BNXToken = artifacts.require("BNXToken");
+const Master = artifacts.require("Master");
 const MockERC20 = artifacts.require("MockERC20");
 const Timelock = artifacts.require("Timelock");
 
@@ -12,7 +12,7 @@ function encodeParameters(types, values) {
 
 contract("Timelock", ([alice, bob, carol, dev, minter]) => {
   beforeEach(async () => {
-    this.sushi = await BnEXToken.new({ from: alice });
+    this.sushi = await BNXToken.new({ from: alice });
     this.timelock = await Timelock.new(bob, "259200", { from: alice });
   });
 
@@ -74,21 +74,16 @@ contract("Timelock", ([alice, bob, carol, dev, minter]) => {
     assert.equal((await this.sushi.owner()).valueOf(), carol);
   });
 
-  it("should also work with MasterChef", async () => {
+  it("should also work with Master", async () => {
     this.lp1 = await MockERC20.new("LPToken", "LP", "10000000000", {
       from: minter,
     });
     this.lp2 = await MockERC20.new("LPToken", "LP", "10000000000", {
       from: minter,
     });
-    this.chef = await MasterChef.new(
-      this.sushi.address,
-      dev,
-      "1000",
-      "0",
-      "1000",
-      { from: alice }
-    );
+    this.chef = await Master.new(this.sushi.address, dev, "1000", "0", "1000", {
+      from: alice,
+    });
     await this.sushi.transferOwnership(this.chef.address, { from: alice });
     await this.chef.add("100", this.lp1.address, true);
     await this.chef.transferOwnership(this.timelock.address, { from: alice });

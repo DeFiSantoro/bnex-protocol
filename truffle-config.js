@@ -29,9 +29,7 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           [process.env.DEPLOYER_PRIVATE_KEY],
-          "https://bsc-dataseed1.binance.org/",
-          0,
-          1
+          "https://bsc-dataseed1.binance.org/"
         ),
       from: process.env.DEPLOYER_ACCOUNT,
       timeoutBlocks: 800,
@@ -41,9 +39,7 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           [process.env.DEPLOYER_PRIVATE_KEY],
-          "https://data-seed-prebsc-2-s1.binance.org:8545/",
-          0,
-          1
+          "https://data-seed-prebsc-2-s1.binance.org:8545/"
         ),
       from: process.env.DEPLOYER_ACCOUNT,
       timeoutBlocks: 800,

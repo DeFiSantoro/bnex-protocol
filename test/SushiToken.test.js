@@ -1,17 +1,17 @@
 const { expectRevert } = require("@openzeppelin/test-helpers");
-const BnEXToken = artifacts.require("BnEXToken");
+const BNXToken = artifacts.require("BNXToken");
 
-contract("BnEXToken", ([alice, bob, carol]) => {
+contract("BNXToken", ([alice, bob, carol]) => {
   beforeEach(async () => {
-    this.sushi = await BnEXToken.new({ from: alice });
+    this.sushi = await BNXToken.new({ from: alice });
   });
 
   it("should have correct name and symbol and decimal", async () => {
     const name = await this.sushi.name();
     const symbol = await this.sushi.symbol();
     const decimals = await this.sushi.decimals();
-    assert.equal(name.valueOf(), "BnEXToken");
-    assert.equal(symbol.valueOf(), "SUSHI");
+    assert.equal(name.valueOf(), "BnEX Token");
+    assert.equal(symbol.valueOf(), "BNX");
     assert.equal(decimals.valueOf(), "18");
   });
 
