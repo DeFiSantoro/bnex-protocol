@@ -25,14 +25,9 @@ contract("Migrator", ([alice, bob, dev, minter]) => {
       (await this.factory2.createPair(this.weth.address, this.token.address))
         .logs[0].args.pair
     );
-    this.chef = await Master.new(
-      this.sushi.address,
-      dev,
-      "1000",
-      "0",
-      "100000",
-      { from: alice }
-    );
+    this.chef = await Master.new(this.sushi.address, dev, "1000", "0", {
+      from: alice,
+    });
     this.migrator = await Migrator.new(
       this.chef.address,
       this.factory1.address,

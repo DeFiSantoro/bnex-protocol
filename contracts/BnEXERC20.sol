@@ -107,7 +107,7 @@ contract BnEXERC20 {
         bytes32 r,
         bytes32 s
     ) external {
-        require(deadline >= block.timestamp, "BnEX::ERC20::EXPIRED");
+        require(deadline >= block.timestamp, "BnEX::ERC20::permit::EXPIRED");
         bytes32 digest = keccak256(
             abi.encodePacked(
                 "\x19\x01",
@@ -127,7 +127,7 @@ contract BnEXERC20 {
         address recoveredAddress = ecrecover(digest, v, r, s);
         require(
             recoveredAddress != address(0) && recoveredAddress == owner,
-            "BnEX::ERC20::INVALID_SIGNATURE"
+            "BnEX::ERC20::permit::INVALID_SIGNATURE"
         );
         _approve(owner, spender, value);
     }

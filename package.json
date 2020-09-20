@@ -1,6 +1,6 @@
 {
   "name": "@bnex/protocol",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "index.js",
   "license": "WTFPL",
   "dependencies": {
@@ -28,7 +28,8 @@
     "mocha": "^8.0.1"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "truffle test ./test/* --network testnet",
+    "build": "truffle compile",
     "deploy": "truffle migrate --network testnet --reset",
     "update": "git add . && git commit -m 'Update' && git push origin master",
     "ganache": "./ganache"

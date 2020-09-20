@@ -60,12 +60,26 @@ contract Master is Ownable {
     BNXToken public bnx;
     // Dev address.
     address public devaddr;
+    // Block number when beta test period ends.
+    uint256 public betaTestEndBlock;
     // Block number when bonus BNX period ends.
     uint256 public bonusEndBlock;
+    // Block number when mint SAKE period ends.
+    uint256 public mintEndBlock;
     // BNX tokens created per block.
     uint256 public bnxPerBlock;
-    // Bonus muliplier for early bnx makers.
-    uint256 public constant BONUS_MULTIPLIER = 10;
+    // Bonus muliplier 1000 bnx per block.
+    uint256 public constant BONUS_ONE_MULTIPLIER = 20;
+    // Bonus muliplier 100 bnx per block.
+    uint256 public constant BONUS_TWO_MULTIPLIER = 2;
+    // beta test block num,about 5 days.
+    uint256 public constant BETA_BLOCKNUM = 144000;
+    // Bonus block num,about 15 days.
+    uint256 public constant BONUS_BLOCKNUM = 432000;
+    // mint end block num,about 40 days.
+    uint256 public constant MINTEND_BLOCKNUM = 1152000;
+    // dev shares 1/11 of user mint is additionaly minted so for 100 bnx minted: 9,09/(100+9.09) = 8.33%.
+    uint256 public constant DEV_SHARES = 10;
     // The migrator contract. It has a lot of power. Can only be set through governance (owner).
     IMigratorChef public migrator;
 
@@ -90,14 +104,15 @@ contract Master is Ownable {
         BNXToken _bnx,
         address _devaddr,
         uint256 _bnxPerBlock,
-        uint256 _startBlock,
-        uint256 _bonusEndBlock
+        uint256 _startBlock
     ) public {
         bnx = _bnx;
         devaddr = _devaddr;
         bnxPerBlock = _bnxPerBlock;
-        bonusEndBlock = _bonusEndBlock;
         startBlock = _startBlock;
+        betaTestEndBlock = startBlock.add(BETA_BLOCKNUM);
+        bonusEndBlock = startBlock.add(BONUS_BLOCKNUM).add(BETA_BLOCKNUM);
+        mintEndBlock = startBlock.add(MINTEND_BLOCKNUM).add(BETA_BLOCKNUM);
     }
 
     function poolLength() external view returns (uint256) {
@@ -172,15 +187,41 @@ contract Master is Ownable {
         view
         returns (uint256)
     {
-        if (_to <= bonusEndBlock) {
-            return _to.sub(_from).mul(BONUS_MULTIPLIER);
-        } else if (_from >= bonusEndBlock) {
-            return _to.sub(_from);
+        uint256 _toFinal = _to > mintEndBlock ? mintEndBlock : _to;
+        if (_toFinal <= betaTestEndBlock) {
+            return _toFinal.sub(_from);
+        } else if (_from >= mintEndBlock) {
+            return 0;
+        } else if (_toFinal <= bonusEndBlock) {
+            if (_from < betaTestEndBlock) {
+                return
+                    betaTestEndBlock.sub(_from).add(
+                        _toFinal.sub(betaTestEndBlock).mul(BONUS_ONE_MULTIPLIER)
+                    );
+            } else {
+                return _toFinal.sub(_from).mul(BONUS_ONE_MULTIPLIER);
+            }
         } else {
-            return
-                bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(
-                    _to.sub(bonusEndBlock)
-                );
+            if (_from < betaTestEndBlock) {
+                return
+                    betaTestEndBlock
+                        .sub(_from)
+                        .add(
+                        bonusEndBlock.sub(betaTestEndBlock).mul(
+                            BONUS_ONE_MULTIPLIER
+                        )
+                    )
+                        .add(
+                        (_toFinal.sub(bonusEndBlock).mul(BONUS_TWO_MULTIPLIER))
+                    );
+            } else if (betaTestEndBlock <= _from && _from < bonusEndBlock) {
+                return
+                    bonusEndBlock.sub(_from).mul(BONUS_ONE_MULTIPLIER).add(
+                        _toFinal.sub(bonusEndBlock).mul(BONUS_TWO_MULTIPLIER)
+                    );
+            } else {
+                return _toFinal.sub(_from).mul(BONUS_TWO_MULTIPLIER);
+            }
         }
     }
 
@@ -234,7 +275,7 @@ contract Master is Ownable {
             .mul(bnxPerBlock)
             .mul(pool.allocPoint)
             .div(totalAllocPoint);
-        bnx.mint(devaddr, bnxReward.div(10));
+        bnx.mint(devaddr, bnxReward.div(DEV_SHARES));
         bnx.mint(address(this), bnxReward);
         pool.accBnEXPerShare = pool.accBnEXPerShare.add(
             bnxReward.mul(1e12).div(lpSupply)
@@ -307,6 +348,15 @@ contract Master is Ownable {
         } else {
             bnx.transfer(_to, _amount);
         }
+    }
+
+    // ########################################
+    // DEV FUNCTIONS
+    // ########################################
+
+    // Handover the bnxtoken.
+    function transferOwnershipOfBNXToken(address newOwner) public onlyOwner {
+        bnx.transferOwnership(newOwner);
     }
 
     // Update dev address by the previous dev.

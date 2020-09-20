@@ -49,16 +49,15 @@ async function deployBnExContracts1(deployer) {
   await deployer.deploy(BnEXRouter, BnEXFactory.address, WBNBS[CHAIN_ID]);
 }
 
-// ============ Deploy Sushiswap ============
+// ============ Deploy BNX ============
 async function deployBnExContracts2(deployer) {
   await deployer.deploy(BNXToken);
   await deployer.deploy(
     Master,
     BNXToken.address,
     adminAccount,
-    BN(100).times(1e18).toString(),
-    "100",
-    "100000000"
+    BN(25).times(1e18).toString(),
+    web3.eth.getBlockNumber()
   );
 }
 

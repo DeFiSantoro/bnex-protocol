@@ -63,17 +63,26 @@ contract BnEXFactory is IBnEXFactory {
     }
 
     function setFeeTo(address _feeTo) external override {
-        require(msg.sender == feeToSetter, "BnEX::Factory::FORBIDDEN");
+        require(
+            msg.sender == feeToSetter,
+            "BnEX::Factory::setFeeTo::FORBIDDEN"
+        );
         feeTo = _feeTo;
     }
 
     function setMigrator(address _migrator) external override {
-        require(msg.sender == feeToSetter, "BnEX::Factory::FORBIDDEN");
+        require(
+            msg.sender == feeToSetter,
+            "BnEX::Factory::setMigrator::FORBIDDEN"
+        );
         migrator = _migrator;
     }
 
     function setFeeToSetter(address _feeToSetter) external override {
-        require(msg.sender == feeToSetter, "BnEX::Factory::FORBIDDEN");
+        require(
+            msg.sender == feeToSetter,
+            "BnEX::Factory::setFeeToSetter::FORBIDDEN"
+        );
         feeToSetter = _feeToSetter;
     }
 }
