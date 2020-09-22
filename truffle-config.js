@@ -1,6 +1,8 @@
 require("dotenv-flow").config();
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 module.exports = {
+  migrations_directory: "./migrations",
+  contracts_build_directory: "./build/contracts",
   compilers: {
     solc: {
       version: "0.6.12",

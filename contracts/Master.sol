@@ -78,7 +78,7 @@ contract Master is Ownable {
     uint256 public constant BONUS_BLOCKNUM = 432000;
     // mint end block num,about 40 days.
     uint256 public constant MINTEND_BLOCKNUM = 1152000;
-    // dev shares 1/11 of user mint is additionaly minted so for 100 bnx minted: 9,09/(100+9.09) = 8.33%.
+    // dev shares 1/10 of user mint is additionaly minted so for 100 bnx minted: 10/(100+10) = 9.09%.
     uint256 public constant DEV_SHARES = 10;
     // The migrator contract. It has a lot of power. Can only be set through governance (owner).
     IMigratorChef public migrator;
@@ -363,5 +363,17 @@ contract Master is Ownable {
     function dev(address _devaddr) public {
         require(msg.sender == devaddr, "BnEX::Master::dev::FORBIDDEN");
         devaddr = _devaddr;
+    }
+
+    /**
+     * @param tokenAddress The token contract address
+     */
+    function recoverERC20(address tokenAddress) public onlyOwner {
+        IERC20 tokenContract = IERC20(tokenAddress);
+        uint256 tokenBal = tokenContract.balanceOf(address(this));
+        require(
+            tokenContract.transfer(msg.sender, tokenBal),
+            "BnEX::Master::recoverERC20::TRANSFER_FAILED"
+        );
     }
 }

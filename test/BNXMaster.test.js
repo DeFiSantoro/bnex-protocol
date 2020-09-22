@@ -35,6 +35,24 @@ contract("Master", ([alice, bob, carol, dev, minter]) => {
     );
   });
 
+  it("should unlock lost token", async () => {
+    this.master = await Master.new(this.bnx.address, dev, "1000", "0", {
+      from: alice,
+    });
+    this.lp = await MockERC20.new("LPToken", "LP", "10000000000", {
+      from: minter,
+    });
+    await this.lp.transfer(this.master.address, "1000", { from: minter });
+    let lpMasterBal = await this.lp.balanceOf(this.master.address);
+    assert.equal(lpMasterBal, "1000");
+
+    await this.master.recoverERC20(this.lp.address, { from: alice });
+    lpMasterBal = await this.lp.balanceOf(this.master.address);
+    assert.equal(lpMasterBal, "0");
+    let lpAliceBal = await this.lp.balanceOf(alice);
+    assert.equal(lpAliceBal, "1000");
+  });
+
   it("should allow dev and only dev to update dev", async () => {
     this.master = await Master.new(this.bnx.address, dev, "1000", "0", {
       from: alice,

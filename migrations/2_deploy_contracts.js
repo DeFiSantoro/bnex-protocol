@@ -44,10 +44,20 @@ async function deployBnExContracts1(deployer) {
     "# COMPUTED_INIT_CODE_HASH",
     keccak256(["bytes"], [`${bytecode}`])
   );
+  console.log(
+    getTargetBlockByTimestamp(
+      await web3.eth.getBlockNumber(),
+      1600876800000
+    ).toString()
+  );
   await deployer.deploy(Multicall);
   await deployer.deploy(BnEXFactory, adminAccount);
   await deployer.deploy(BnEXRouter, BnEXFactory.address, WBNBS[CHAIN_ID]);
 }
+
+const getTargetBlockByTimestamp = (actualBlock, targetTimestamp) => {
+  return (actualBlock + (targetTimestamp - Date.now()) / 1000 / 3).toFixed();
+};
 
 // ============ Deploy BNX ============
 async function deployBnExContracts2(deployer) {
@@ -57,7 +67,10 @@ async function deployBnExContracts2(deployer) {
     BNXToken.address,
     adminAccount,
     BN(25).times(1e18).toString(),
-    web3.eth.getBlockNumber()
+    getTargetBlockByTimestamp(
+      await web3.eth.getBlockNumber(),
+      1600876800000
+    ).toString()
   );
 }
 

@@ -40,7 +40,7 @@ library BnEXLibrary {
                         hex"ff",
                         factory,
                         keccak256(abi.encodePacked(token0, token1)),
-                        hex"7b7a02bde225adf877dc9cd15fa2322c6af310b1adfbc01107f0e1d01c29129c" // init code hash
+                        hex"57a889ef29c964bed922944cc2438234be3fc6da6b125995b7b707dad22d371d" // init code hash
                     )
                 )
             )

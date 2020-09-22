@@ -31,7 +31,7 @@ readFiles(
     cleaned["bytecode"] = load["bytecode"];
     cleaned["networks"] = {};
     networks.map((i) => {
-      cleaned["networks"][i] = { address: "0x0" };
+      cleaned["networks"][i] = { address: "0x00" };
       if (load["networks"].hasOwnProperty(i)) {
         cleaned["networks"][i]["links"] = load["networks"][i]["links"];
         cleaned["networks"][i]["address"] = load["networks"][i]["address"];
@@ -39,10 +39,9 @@ readFiles(
           load["networks"][i]["transactionHash"];
       }
       fs.writeFileSync(
-        "../bnex-sdk/src/abi/" + filename,
+        "./build/contracts/" + filename,
         JSON.stringify(cleaned)
       );
-      fs.writeFileSync("./build/clean/" + filename, JSON.stringify(cleaned));
     });
   },
   function (err) {
