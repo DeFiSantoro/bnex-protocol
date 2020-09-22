@@ -3,7 +3,7 @@ const { bytecode } = require("../build/contracts/BnEXPair.json");
 const { keccak256 } = require("@ethersproject/solidity");
 const BN = require("bignumber.js");
 
-const CHAIN_ID = 97;
+const CHAIN_ID = 56;
 // ============ Accounts ============
 const account = web3.eth.accounts.privateKeyToAccount(
   `0x${process.env.DEPLOYER_PRIVATE_KEY}`
@@ -32,9 +32,9 @@ const migration = async (deployer, network, accounts) => {
     deployBnExContracts1(deployer, network, accounts),
     deployBnExContracts2(deployer, network, accounts),
   ]);
-  await initialize(deployer, network, accounts);
-  await show(deployer, network, accounts);
-  await writeConfig(deployer, network, accounts);
+  // await initialize(deployer, network, accounts);
+  // await show(deployer, network, accounts);
+  // await writeConfig(deployer, network, accounts);
 };
 module.exports = migration;
 
@@ -50,9 +50,13 @@ async function deployBnExContracts1(deployer) {
       1600876800
     ).toString()
   );
-  await deployer.deploy(Multicall);
-  await deployer.deploy(BnEXFactory, adminAccount);
-  await deployer.deploy(BnEXRouter, BnEXFactory.address, WBNBS[CHAIN_ID]);
+  // await deployer.deploy(Multicall);
+  // await deployer.deploy(BnEXFactory, adminAccount);
+  await deployer.deploy(
+    BnEXRouter,
+    "0xe61168B9fb3bf189D7260EC45F47Ac227E3f7941",
+    WBNBS[CHAIN_ID]
+  );
 }
 
 const getTargetBlockByTimestamp = (actualBlock, targetTimestamp) => {
@@ -64,28 +68,27 @@ const getTargetBlockByTimestamp = (actualBlock, targetTimestamp) => {
 
 // ============ Deploy BNX ============
 async function deployBnExContracts2(deployer) {
-  await deployer.deploy(BNXToken);
-  await deployer.deploy(
-    Master,
-    BNXToken.address,
-    adminAccount,
-    BN(25).times(1e18).toString(),
-    getTargetBlockByTimestamp(
-      await web3.eth.getBlockNumber(),
-      1600876800
-    ).toString()
-  );
+  // await deployer.deploy(BNXToken);
+  // await deployer.deploy(
+  //   Master,
+  //   BNXToken.address,
+  //   adminAccount,
+  //   BN(25).times(1e18).toString(),
+  //   getTargetBlockByTimestamp(
+  //     await web3.eth.getBlockNumber(),
+  //     1600876800
+  //   ).toString()
+  // );
 }
 
 // ============ Init ============
 async function initialize(deployer, network, accounts) {
-  const token = await new web3.eth.Contract(BNXToken.abi, BNXToken.address);
-  console.log(
-    await token.methods
-      .transferOwnership(Master.address)
-      .send({ from: account, gas: 100000 })
-  );
-
+  // const token = await new web3.eth.Contract(BNXToken.abi, BNXToken.address);
+  // console.log(
+  //   await token.methods
+  //     .transferOwnership(Master.address)
+  //     .send({ from: account, gas: 100000 })
+  // );
   // const master = await new web3.eth.Contract(Master.abi, Master.address);
   // console.log(
   //   await master.methods
