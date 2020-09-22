@@ -18,7 +18,7 @@ const NETWORK = 56;
 
 const Master = MasterJson.networks[NETWORK].address;
 let provider = new ethers.providers.JsonRpcProvider(
-  "https://data-seed-prebsc-2-s1.binance.org:8545/"
+  "https://bsc-dataseed1.binance.org/"
 );
 let wallet = new ethers.Wallet(`0x${process.env.DEPLOYER_PRIVATE_KEY}`);
 wallet = wallet.connect(provider);
