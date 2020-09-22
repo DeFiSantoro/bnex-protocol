@@ -47,7 +47,7 @@ async function deployBnExContracts1(deployer) {
   console.log(
     getTargetBlockByTimestamp(
       await web3.eth.getBlockNumber(),
-      1600876800000
+      1600876800
     ).toString()
   );
   await deployer.deploy(Multicall);
@@ -56,7 +56,10 @@ async function deployBnExContracts1(deployer) {
 }
 
 const getTargetBlockByTimestamp = (actualBlock, targetTimestamp) => {
-  return (actualBlock + (targetTimestamp - Date.now()) / 1000 / 3).toFixed();
+  return (
+    actualBlock +
+    (targetTimestamp - Math.floor(Date.now() / 1000)) / 3
+  ).toFixed();
 };
 
 // ============ Deploy BNX ============
@@ -69,7 +72,7 @@ async function deployBnExContracts2(deployer) {
     BN(25).times(1e18).toString(),
     getTargetBlockByTimestamp(
       await web3.eth.getBlockNumber(),
-      1600876800000
+      1600876800
     ).toString()
   );
 }

@@ -1,6 +1,6 @@
 {
   "name": "@bnex/protocol",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "main": "index.js",
   "license": "WTFPL",
   "dependencies": {
@@ -32,7 +32,7 @@
   "scripts": {
     "test": "truffle test ./test/* --network test",
     "build": "truffle compile",
-    "deploy": "truffle migrate --network testnet --reset && yarn clean",
+    "deploy": "truffle migrate --network mainnet --reset && yarn clean",
     "update": "git add . && git commit -m 'Update' && git push origin master",
     "ganache": "./ganache",
     "flatten": "sol-merger \"./contracts/**/*.sol\" ./_flat",

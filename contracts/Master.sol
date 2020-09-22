@@ -69,7 +69,7 @@ contract Master is Ownable {
     // BNX tokens created per block.
     uint256 public bnxPerBlock;
     // Bonus muliplier 1000 bnx per block.
-    uint256 public constant BONUS_ONE_MULTIPLIER = 20;
+    uint256 public constant BONUS_ONE_MULTIPLIER = 10;
     // Bonus muliplier 100 bnx per block.
     uint256 public constant BONUS_TWO_MULTIPLIER = 2;
     // beta test block num,about 5 days.

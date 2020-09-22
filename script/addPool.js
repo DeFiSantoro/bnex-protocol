@@ -14,7 +14,7 @@ const {
 } = require("@bnex/sdk");
 let tokens = require("./tokens.json");
 
-const NETWORK = 97;
+const NETWORK = 56;
 
 const Master = MasterJson.networks[NETWORK].address;
 let provider = new ethers.providers.JsonRpcProvider(
